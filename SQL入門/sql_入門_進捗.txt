@@ -1,0 +1,20 @@
+update 家計簿
+set 出金額 = 90000
+where 日付 = '2018-02-25';
+
+select *
+from 家計簿;
+
+delete from 家計簿
+where 日付 = '2018-02-25';
+
+select *
+from 家計簿
+where 入金額 = 50000;
+
+delete from 家計簿
+where 出金額 > 4000;
+
+update 家計簿
+set メモ = 'カフェラテを購入'
+where 日付 = '2018-02-03';
