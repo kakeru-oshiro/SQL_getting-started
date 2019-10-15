@@ -1,0 +1,79 @@
+select 費目 as item, 入金額 receive, 出金額 pay
+from 家計簿 as moneybook
+where 費目 = '給料';
+-- where句のないupdate文は全て更新
+update 家計簿
+set 入金額 = 777
+where 日付= '2018-2-11';
+-- where句のないdelete文はすべて削除
+-- delete from *******;
+insert into 家計簿(
+	費目,
+	日付,
+	出金額
+	)
+values(
+	'通信費',
+	'2018-02-20',
+	6200
+);
+insert into 家計簿
+values ('2018-02-21', '通信費', '携帯電話料金', 6200 )
+/*
+A select
+B update
+C delete
+D insert
+E from
+F from
+G into
+H set
+
+1.INTEGER
+2.VARCHAR
+3.DATE
+4.DECIMAL
+5.TIME
+6.INTEGER
+7.CHAR
+
+1.select コード, 地域, 都道府県名, 県庁所在地, 面積 from 都道府県
+2.select * from 都道府県
+3.select コード, 地域 as area, 都道府県 as pref, 県庁所在地, 面積 from 都道府県
+
+1.insert into 都道府県(
+	コード, 地域, 都道府県名, 面積
+	)
+values(
+	'26', '近畿', '京都', '面積'
+);
+
+2.insert into 都道府県
+values(
+	'37', '四国', '香川', '高松', 1876
+);
+
+3.insert into 都道府県(
+	コード,
+	都道府県名,
+	県庁所在地
+	)
+values(
+	'40',
+	'福岡',
+	'福岡'
+);
+
+1.
+update 都道府県
+set 県庁所在地 = '京都'
+where コード = '26';
+
+2.
+update 都道府県
+set 地域 = '九州', 面積 = 4976
+where コード = '40';
+
+1.
+delete form 都道府県 where コード = '26';
+*/
