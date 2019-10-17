@@ -1,0 +1,117 @@
+select + 
+from 家計簿
+where 出金額 between 100 and 3000;
+
+select * from 家計簿 where メモ like '%100$%' escape '$';
+上記だと$の後ろの%は文字扱いです。
+
+式 値 < ANY (100, 200, 300); --いずれか一つが条件に合致すればtrue
+式 値 < ALL (100, 200, 300); --全てが条件に合わなければfalse
+
+
+--DELETE FROM 家計簿
+--WHERE 出金額 > 0;
+ 
+-- % 任意の0文字以上の文字列
+-- _任意の1文字
+ 
+select * from 家計簿
+where メモ like '%1月%';
+
+select * from 家計簿 where 費目 in ('食費', '交際費');
+select * from 家計簿 where 費目 not in ('食費', '交際費');
+where not 販売店 = B;
+
+not, and, orの順番で評価されます！ ※括弧を付けると優先順位があがります。
+select * from みなと君の買い物リスト
+where 販売店 = 'A'
+or    販売店 = 'B'
+and   カテゴリ = 'ゲーム'
+or    カテゴリ = 'DVD';
+上記のSQLだとandから先に処理されるため、「販売店Bのげーむ」か「販売店A」か「カテゴリがDVD」のいずれかで
+あれば条件がtrueになってしまう。きちんとやるには
+select * from みなと君の買い物リスト
+where (販売店 = 'A'
+or    販売店 = 'B')
+and   (カテゴリ = 'ゲーム'
+or    カテゴリ = 'DVD';)
+
+この値を指定することで、ある1行を完全に特定できる。という役割を持つものを主キー（primary key）という・
+主キーは
+・必ず何らかのデータが格納される（nullではない）
+・他の行と値が重複しない
+
+主キーの役割を果たせるこのこの列は、自然キー（natural key）と呼ばれる
+管理目的のための人為的に追加された列を自然キーに対して人口キー(artificial key)や代替キー(surrogate key)と呼ぶ
+
+一つでは主キーになれなくても、複数のキーを用いて主キーとなるモノを複合キー（compound key）と呼ばれる。
+例）氏名、住所、生年月日の組み合わせ
+
+日付について
+2019年3月以前の情報が欲しい場合に
+日付 > 2019年3月31日 としてしまうと上手くいかないことがある。時刻を設定しないと2019年3月31日00:00:00となるためである。
+確実に日付で情報が欲しいなら
+日付 > 2019年4月1日 にすべき
+
+
+1.
+select * from 気象観測 where 月 = '6'
+2.
+select * from 気象観測 where  月 <> '6'
+3.
+select * from 気象観測 where 降水量 < 100
+4.
+select * from 気象観測 where 降水量 > 200
+5.
+select * from 気象観測 where 最高気温 >= 30
+6.
+select * from 気象観測 where 最低気温 <= 0
+7.
+select * from 気象観測 where in(3, 5, 7)
+7-2.
+select * from 気象観測 where 月 = 3 or 月 = 5 or 月 = 7
+8.
+select * from 気象観測 where not in(3, 5, 7)
+8-2.
+select * from 気象観測 where 月 <> 3 and 月 <> 5 and 月 <> 7
+9.
+select * from 気象観測 where 降水量 <= 100 and 湿度 < 50
+10.
+select * from 気象観測 where 最低気温 < 5 or 最高気温 > 35
+11.
+select * from 気象観測  where 湿度 between 60 and 79
+11-2.
+select * from 気象観測 where 湿度 > 60 and 湿度 < 79
+12
+select * from 気象観測 where in(*) is null 
+select * from 気象観測 where 降水量 is null or ///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
