@@ -1,0 +1,53 @@
+select * from 都道府県 where 都道府県名 like '%川';
+select * from 都道府県 where 都道府県名 like '%島%';
+select * from 都道府県 where 都道府県名 like '愛%';
+select * from 都道府県 where 都道府県名 = 県庁所在地;
+select * from 都道府県 where 都道府県名 <> 県庁所在地;
+
+select * from 成績表;
+insert into 成績表 values('S003', '織田信長', 50, 60, 70, 80, 90);
+insert into 成績表 values('A002', '学生名', 45, 55, 65, 75, 85);
+update 成績表 set 法学 = 85, 哲学 = 67 where 学籍番号 = 'S002';
+update 成績表 set 外国語 = 81 where 学籍番号 in ('A002', 'E004');
+
+   -- 1
+update 成績表 set 総合成績 = 'A' where
+法学 >= 80 and 経済学 >= 80 and 哲学 >= 80 and 情報理論 >= 80 and 外国語 >= 80;
+-- 2
+update 成績表 set 総合成績 = 'B' where
+(法学 >= 80 or 外国語 >= 80) and (哲学 >= 80 and 経済学 >= 80) and 総合成績 is null;
+-- 3
+update 成績表 set 総合成績 = 'D' where
+法学 < 50 and 経済学 < 50 and 哲学 < 50 and 情報理論 < 50 and 外国語 < 50 and 総合成績 is null;
+-- 4
+update 成績表 set 総合成績 = 'C' where 総合成績 is null;
+
+delete from 成績表 WHERE 法学 = 0 OR 経済学 = 0 OR 哲学 = 0 OR 情報理論 = 0 OR 外国語 = 0;
+
+１．月
+２．コード
+３．学籍番号
+
+第４章
+distinct 検索結果から重複行を削除する
+order by 検索結果の順序を並び替える
+offset ^ fetch 検索結果から件数を限定して取得する
+union 検索結果に他の検索結果を足し合わせる
+except 検索結果から他の検索結果を差し引く
+intersect 検索結果と他の検索結果で重複する部分を取得する
+
+select distinct 入金額 from 家計簿 -- データの種類を取得したいときに使用するよ
+
+order by 列名 並び順(asc, desc)
+select * from 家計簿 order by 入金額 des
+c, 出金額 desc
+
+SELECT * FROM 家計簿
+ ORDER BY 4 DESC, 5 DESC --カラムを１から数え始めての４、５番目
+
+ select 出金額, 入金額 form 家計簿 order by 1 desc, 2 desc 
+ -- これはselect の左側から１、２番目を表しているので、selectの順番が変われば順番も変わる。
+
+ 
+
+
