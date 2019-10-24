@@ -1,0 +1,34 @@
+ select 費目, 出金額 from 家計簿
+ order by 出金額 desc
+ offset 0 rows
+ fetch next 3 rows only;
+ 
+ 
+select 費目, 出金額 from 家計簿
+order by 出金額 desc
+offset 2 rows
+fetch next 1rows only
+
+select 文１
+union (ALL)
+select 文2
+
+-- union 和集合
+select 費目, 入金額, 出金額 from 家計簿
+ union 
+select 費目, 入金額, 出金額 from 家計簿アーカイブ
+ order by 2, 3, 1
+
+-- 集合演算子が使える条件 ・selectの結果を集合演算子でまとめるときは、選択列リストの列数とそれぞれのデータ型が一致しなければならない。
+-- 集合演算子でorder byを使うときは、「order by は最後のselect文で実施する。」、「列番号以外による指定（列名やASによる別名）の場合、1つ目のselect文のものを指定する。」
+
+
+-- exept / minus 差集合
+ select 費目 from 家計簿
+ except
+ select 費目 from 家計簿アーカイブ
+
+ -- intersect 積集合
+ select 費目 from 家計簿
+ intersect
+select 費目 from 家計簿アーカイブ
