@@ -1,0 +1,228 @@
+-- 1
+select * from 注文履歴 order by 注文番号, 注文枝番;
+
+-- 2
+select distinct 商品名 from 注文履歴 where 日付 between '2018-01-01' and '2018-01-31'order by 商品名;
+-- 2-2
+select distinct 商品名 from 注文履歴 where 日付 >= '2018-01-01' and 日付 <= '2018-01-31'order by 商品名;
+
+-- 3
+select 注文番号, 注文枝番, 注文金額 from 注文履歴 where 分類 = 1 order by 注文金額 offset 1 rows fetch next  3 rows only;
+
+-- 4
+select 日付, 商品名, 単価, 数量, 注文金額 from 注文履歴 where 分類 = '3' and 数量 >= 2 order by 日付, 数量 desc;
+
+-- 5
+select 分類, 商品名, サイズ, 単価 from 注文履歴 
+union
+select 分類, 商品名, サイズ, 単価 from 注文履歴 where 分類 = '1'
+order by 分類, 商品名;
+
+-- 5 
+select distinct 分類, 商品名, サイズ, 単価 from 注文履歴 where 分類 = '1'
+union
+select distinct 分類, 商品名, null, 単価 from 注文履歴 where 分類 = '2'
+union
+select distinct 分類, 商品名, null, 単価 from 注文履歴 where 分類 = '3'
+order by 1, 2;
+-- unionでのorder by は最後に行う。また、order by で列を数字で指定しない場合は一つ目のselect文に従うこと
+-- unionでは列数とデータ型が合わないと実行できない。しかし、列数をそろえるために、selectでnullを入れることで調整できます。
+
+page 133 4-2
+-- 1
+select 値 from 奇数
+union
+select 値 from 偶数;
+-- 2
+select 値 from 整数
+except
+select 値 from 偶数;
+
+-- 3
+select 値 from 整数
+intersect 
+select 値 from 偶数;
+
+-- 4
+select 値 from 偶数
+intersect
+select 値 from 奇数;
+
+select 	出金額,
+		出金額 + 100,
+		'SQL'
+	from 家計簿
+
+-- 文字列||文字列 で文字列を連結する。
+
+/* 費目の値に応じて変換する */
+select	費目, 出金額,
+		case 費目 when '居住費' then '固定費'
+				  when '水道光熱費' then '固定費'
+				  else '変動費'
+		end as 出費の分類
+	from 家計簿
+	where 出金額 > 0;
+
+/* 条件に応じた値に変換する*/
+select 費目, 入金額,
+  case when 入金額 < 5000 then 'お小遣い'
+  	   when 入金額 < 10000 then '一時収入'
+	   when 入金額 < 30000 then '給料出たー'
+	   else '想定外の収入です'
+  end as 収入の分類
+  from 家計簿
+  where 入金額 > 0;
+
+  /* 関数について定められていること
+  名前：その関数の名前
+  引数：その関数を呼び出す際に引き渡す情報(関数によっては二つ以上の場合もある)
+  戻り値：その関数の呼び出し結果として得られる情報 
+  */
+
+  SELECT メモ, LENGTH(メモ) AS メモの長さ
+  FROM 家計簿;
+
+/*
+関数はselectだけでなくwhere句などでも使える
+*/
+
+-- length(trim('sql  '))
+-- length('SQL')
+
+/*
+ユーザー定義関数
+あらかじめ用意された関数だけでなく、必要とする処理を自分で記述して作成した関数をSQL文から利用することができる。
+これをユーザー定義関数という。
+ストアドプロシージャ
+
+*/
+
+-- length
+select メモ, length(メモ) as メモの長さ
+from 家計簿
+where length(メモ) <=10;
+
+-- trim
+select メモ, trim(メモ) as 空白を除去したメモ
+from 家計簿
+/*
+TRIMは文字列の両サイド、LTRIMは文字列の左側、RTRIMは文字列の右側の空白を除去した文字列になる。
+使いどころとしてはchar(10)型の列に対して'abc'と書いてあったら7文字を空白として入れる。
+その文字をselectで呼び出すとそのまま空白が後ろについてくるので、このような時にtrimを使うと空白を除去した状態で表示できる。
+*/
+
+-- replace
+update 家計簿
+	set メモ = replace(メモ, '購入', '買った');
+
+/*
+replace(置換対象の文字列, 置換前の部分文字列, 置換後の部分文字列)
+*/
+
+-- substring / substring
+-- substring(文字列を表す列, 抽出を開始する位置, 抽出する文字の数) -> 抽出された部分文字列
+select * from 家計簿
+where substring(費目, 1, 3) like '%費%'; -- 範囲内に'費'が入っているかどうか
+/*
+lengthもsubstringもDBMS製品によっては文字列指定かバイト数指定かは異なる
+*/
+
+-- concat
+-- concat(文字列, 文字列) => 連結後の文字列
+select concat(費目, ':' || メモ) from 家計簿
+
+-- round
+-- round(数字を表す列, 有効とする桁数) -> 四捨五入した値
+select 出金額, round(出金額, -2) as 百円単位の出金額
+from 家計簿
+
+/*
+有効とする桁数に指定する値が正の場合は少数部の桁数、府の場合は整数部の桁数を表す
+*/
+
+-- trunc
+-- roundと同じ使い方で切り捨て
+select 出金額, trunc(出金額, -2) as 切り捨て金額 from 家計簿
+
+-- power
+-- power(数値を表す列, 何乗するかを指定する値) -> 数値を指定した回数だけ乗じた結果
+-- ある値のべき乗（2乗や3乗など）
+select 出金額, power(出金額, 2) as べき乗 from 家計簿
+
+-- current_date 現在の日付を得る current_time
+-- current_date -> 現在の日付(YYYY-MM-DD)
+-- current_time -> 現在の時刻(HH:MM:SS)
+-- 引数が不要のため、後ろに()は付記しない
+INSERT INTO 家計簿
+VALUES (CURRENT_DATE, '食費', 'ドーナツを買った', 0, 260);
+
+-- cast 型変換
+-- cast(変換する値 as 変換する型) -> 変換後の値
+-- 使用するときは数字を文字列として使いたいときなどに使用するよ
+cast(出金額 as varchar(20)) + '円'
+
+-- coalesce 最初に登場するnullではない値を返す関数
+-- caalesce(列や式1,列や式2,列や式3---) ->引数のうち、最初に現れたnullではない引数を返す
+-- 引数は任意の数を指定可能。ただし、すべての引数は型が一致している必要がある。もしすべての引数がnullの場合は戻り値はnull
+select coalesce('A', 'B', 'C');
+select coalesce(null, 'B', 'C');
+select coalesce(null, null, 'C');
+select coalesce(数字型の列, 0); -- 数値型の列が出力されるがnullが格納されている場合は0が出力される
+select 日付, 費目,
+		coalesce(メモ, '(メモはnullです)') as メモ,
+		入金額, 出金額
+from    家計簿
+-- 値がnullの場合の代わりに表示させたい値があるときに使用する
+
+/*
+関数などを使用する場合はfrom句を用いずにselect句だけで結果を表示させることができる 例）select coalesce('A','B','C')-> 結果はA
+ただし、oracleなどはfrom句の記述を必須としているのでdualやsysibm.sysdummy1のようなダミーテーブルが必要となる
+select 式や関数 from dual
+*/
+
+/*
+page164 この章のまとめ
+家計簿で入金と出金の差額を求めたい
+select 日付, 費目, メモ, 入金額, 出金額,
+       入金額 - 出金額 as 入出金差額
+from   家計簿
+
+8文字以上のメモは、…で省略させたい
+select 日付, 費目,
+       case when length(メモ) >= 8 then substring(メモ, 1, 8) || '…'
+       else メモ
+       end as メモ, 入金額, 出金額
+from 家計簿
+
+1ドル=110円と仮定して、入金額をドル表記したい
+select 日付, trunc(入金額/110.0, 0) as 入金ドル,
+       trunc(入金額/110.0, 0) as 出金ドル
+from 家計簿
+
+誤って未来の日付で登録されている不正な行を探したい。
+select * from 家計簿 where 日付 > current_date
+
+家計簿のメモを一覧表示。メモが未登録の行は代わりに費目を、費目も未登録の場合は不明としたい
+select 日付, coalesce(メモ, 費目, '不明') as 備考 from 家計簿
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
