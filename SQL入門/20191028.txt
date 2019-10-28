@@ -1,0 +1,59 @@
+-- 5-1
+-- A
+update 試験結果
+set 午後1 = 平均点 * 4 - 午前 - 午後2 - 論述
+where 受験者id = 'SW1046';
+ 
+-- B
+update 試験結果
+set 論述 = 平均点 * 4 - 午前 - 午後1 - 午後2
+where 受験者id = 'SW1350';
+
+-- C
+update 試験結果
+set 午前 = 平均点 * 4 - 午後1 - 午後2 - 論述
+where 受験者id = 'SW1877';
+
+SELECT * FROM 試験結果;
+
+-- 5-1-2
+select 受験者id as 合格者ID
+from 試験結果
+where 午前 >= 60 and 午後1 + 午後2 >= 120 and 論述 / 平均点 * 4 >= 0.3;
+
+-- 5-2
+update 回答者
+set 国名 = case substring(trim(メールアドレス), length(trim(メールアドレス))-1, 2)
+			when 'jp' then '日本'
+			when 'uk' then 'イギリス'
+			when 'cn' then '中国'
+			when 'fr' then 'フランス'
+			when 'vn' then 'ベトナム'
+			end;
+			
+select * from 回答者; 
+
+-- 5-2-2
+select trim(メールアドレス) as メールアドレス, concat(case
+							when 年齢 >= 50 then '50代'
+							when 年齢 >= 40 then '40代'
+							when 年齢 >= 30 then '30代'
+							when 年齢 >= 20 then '20代'
+							end, ':' || case
+							when 性別 = 'M' then '男性'
+							when 性別 = 'F' then '女性'
+							end) as 属性
+from 回答者;
+
+以下、模範回答
+SELECT TRIM(メールアドレス) AS メールアドレス,
+  CASE WHEN 年齢 >= 20 AND 年齢 < 30 THEN '20代'
+       WHEN 年齢 >= 30 AND 年齢 < 40 THEN '30代'
+       WHEN 年齢 >= 40 AND 年齢 < 50 THEN '40代'
+       WHEN 年齢 >= 50 AND 年齢 < 60 THEN '50代' END
+    || '：' ||
+  CASE 性別 WHEN 'M' THEN '男性'
+                WHEN 'F' THEN '女性' END AS 属性
+  FROM 回答者
+
+
