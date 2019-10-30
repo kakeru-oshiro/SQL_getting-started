@@ -1,0 +1,134 @@
+-- 5-3-1
+update 受注
+set 文字数 = length(replace(文字,' ', ''));
+select * from 受注;
+
+-- 5-3-2
+select 受注日, 受注id, 文字数, case
+	書体コード when '1' then 'ブロック体'
+			   when '2' then '筆記体'
+			   when '3' then '草書体'
+			   else 'ブロック体'
+			   end as 書体名,
+		case
+	書体コード when '1' then 100
+			   when '2' then 150
+			   when '3' then 200
+			   else 100
+			   end as 単価,
+			   case when 文字数 > 10 then 500
+			   		else 0
+					end as 特別加工料
+from 受注
+order by 受注日, 受注id;
+
+-- 5-3-2模範解答
+select 受注日, 受注id, 文字数, 
+case coalesce(書体コード, '1')
+	when '1' then 'ブロック体'
+	when '2' then '筆記体'
+	when '3' then '草書体'
+	end as 書体名,
+	case coalesce(書体コード, '1')
+		when '1' then 100
+		when '2' then 150
+		when '3' then 200 end as 単価,
+	case when 文字数 > 10 then 500 else 0 end as 特別加工料
+from 受注
+order by 受注日, 受注id
+
+-- 5-3-3
+update 受注
+set 文字 = replace(文字, ' ', '★')
+where 受注id = '113';
+
+-- 6-2
+SELECT
+    SUM(出金額) AS 合計出金額,
+    round(AVG(出金額), 0) AS 平均出金額,
+    MAX(出金額) AS 最も大きな散財,
+    MIN(出金額) AS 最も少額の支払い
+  FROM 家計簿
+  
+-- 6-3
+select count(*) as 食費の行数
+from 家計簿
+where 費目 = '食費'
+
+/*
+count(*)とcount(列)の違い
+・count(*)は、単純に行数をカウントする（nullも含める）
+・count(列)は、指定列の値がnullである値を無視してカウントする
+*/
+
+/*
+重複した値を除いた集計
+ang,sum,countの各関数ではdistinctを指定するとことによって、その列で
+重複している値をの地阿多状態で集計が行われる
+select count(distinct 費目) from 家計簿
+上記のSQL文では、下記簿テーブルに登録されている費目の種類数をカウントすることができる
+*/
+
+-- 集計はselect文でしか使えないよ！検索結果に対して集計を行うためupdate,insert,deleteでは使えない
+-- 集計関数が記述できるのはselect文の選択列リスト化, order by句, having句のみ使える。
+-- 結果表がでこぼこになってはいけない
+/*
+sqlの結果表は
+・結果表は必ず長方形になる
+・結果表がでこぼこになるようなsql文は実行できない
+例)select 日付, sum(出金額) as 出金額計 from 家計簿
+*/
+
+/*
+sum 数字型のみOK
+max 数字は最大、文字列は並び替えて最後の文字列、日付は最も新しい日付
+min 数字は最小、文字列は並び替えて最初の文字列、日付は最も古い
+avg 数字型のみOK
+count 数字も文字列も日付も全部行数
+・nullのあつかい
+sum, max, min, avgはnullを無視する
+countは列指定をしたら無視するが、*指定だとカウントする
+nullを０とカウントしたいときは
+select avg (coalesce(出金額, 0)) as 出金額の平均 from 家計簿
+とすると良い
+*/
+
+-- 6-6
+select 費目, sum(出金額) as 費目別の出金額合計
+from 家計簿
+group by 費目
+
+select グループ化の基準列名, 集計関数
+from テーブル名
+where 絞り込み条件
+group by グループ化の基準列名
+
+-- まずwhere句で絞り込み、同じ値でてーぷるを作り、集計関数を実行するため集計関数はwhere句では使用できない。
+-- グループ化してから条件を絞り込むにはhavingを用いる
+select 費目, sum(出金額) as 費目別の出金額の合計
+from 家計簿
+group by 費目
+having sum(出金額) > 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
