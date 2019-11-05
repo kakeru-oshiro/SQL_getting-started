@@ -1,0 +1,50 @@
+-- 集計テーブル
+select 費目, sum(出金額) as 合計,round(avg(出金額), 0) as 平均, max(出金額) as 最大, min(出金額) as 最小, count(*) as 回数
+from 家計簿
+group by 費目
+having sum(出金額) > 0;
+
+-- 集計テーブルの内容が古くならないように、定期的に再集計を行って内容を更新する作業が必要不可欠になる。
+
+/*
+select文の全容
+select 選択列リスト
+from テーブル名
+[where 条件式]
+[group by グループ化列名]
+[having 集計結果に対する条件式]
+[order by 並び替え列名]
+*/
+
+-- 1-1
+select sum(降水量) as 年間降水量, max(最高気温) as 年間の最高気温, min(最低気温) as 年間の最低気温
+from 都市別気象観測
+
+-- 1-2
+select sum(降水量) as 年間降水量, round(avg(最高気温), 0) as 最高気温の平均, round(avg(最低気温), 0) as 最低気温の平均
+from 都市別気象観測
+where 都市名 = '東京';
+
+-- 1-3
+select 都市名, round(avg(降水量) , 0) as 平均降水量, min(最高気温) as 最も低い最高気温, max(最低気温) as 最も高い最低気温
+from 都市別気象観測
+group by 都市名;
+
+-- 1-4
+select 月, round(avg(降水量), 0) as 月別降水量,round(avg(最高気温), 0) as 最高気温の平均, round(avg(最低気温), 0) as 最低気温の平均
+from 都市別気象観測
+group by 月
+order by 月;
+
+-- 1-5
+select 都市名, max(最高気温) as "38度以上の最も高い最高気温"
+from 都市別気象観測
+group by 都市名
+having max(最高気温) >= 38;
+
+-- 1-6
+select 都市名, min(最低気温) as "-10度を下回る最も低い最低気温"
+from 都市別気象観測
+group by 都市名
+having min(最低気温) <= -10;
+
